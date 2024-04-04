@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Poll Voting</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <header class="container py-2">
+    <h1>Poll Voting</h1>
+  </header>
+  <section class="container py-2">
+    <label for="john"> John Doe:</label><input type="radio" name="names" value="John Doe" id="john" /><br><br>
+    <label for="alex"> Alex Willam:</label><input type="radio" name="names" value="Alex Willam" id="alex" /><br><br>
+    <label for="prerana"> Prerana Nawar:</label><input type="radio" name="names" value="Prerana Nawar"
+      id="prerana" /><br><br>
+    <button id="voteBtn" class="btn btn-primary mb-4">Vote</button>
+    <div>
+      <h2>Results:</h2>
+
+      <ul id="voteCountList" class="list-group"></ul>
+    </div>
+    <div>
+      <h2 class="pt-2">Winner:</h2>
+      <p id="voteResult"></p>
+    </div>
+  </section>
+
+  <script>
+    const names = document.getElementsByName("names")
+    const voteBtn = document.getElementById("voteBtn")
+    const voteCountList = document.getElementById("voteCountList")
+    const voteResult = document.getElementById("voteResult")
+
+    let voteData = []
+
+    voteBtn.addEventListener("click", function () {
+      let selectedName = ""
+      let found = false
+      let i = 0;
+      while (i < names.length && !found) {
+        if (names[i].checked) {
+          selectedName = names[i].value
+          found = true
+        }
+        i++
+      }
+
+      let existingVote = null
+      i = 0
+      while (i < voteData.length && !existingVote) {
+        if (voteData[i].name === selectedName) {
+          existingVote = voteData[i]
+        }
+        i++
+      }
+
+      if (existingVote) {
+        existingVote.votes++
+      } else {
+        voteData.push({name: selectedName, votes: 1})
+      }
+
+      displayResults();
+    });
+
+    function displayResults() {
+      voteCountList.innerHTML = ""
+
+      for (let i = 0; i < voteData.length; i++) {
+        const listItem = document.createElement("li")
+        listItem.textContent = `${voteData[i].name}: ${voteData[i].votes}`
+        listItem.className = "list-group-item"
+        voteCountList.appendChild(listItem)
+      }
+
+      let winner = "";
+      let maxVotes = 0;
+      for (let i = 0; i < voteData.length; i++) {
+        if (voteData[i].votes > maxVotes) {
+          maxVotes = voteData[i].votes
+        }
+      }
+
+      const winners = [];
+      for (let i = 0; i < voteData.length; i++) {
+        if (voteData[i].votes === maxVotes) {
+          winners.push(voteData[i].name)
+        }
+      }
+
+      if (winners.length === 1) {
+        winner = `${winners[0]} is winning with ${maxVotes} votes!`
+      } else {
+        winner = `It's a tie between ${winners.join(', ')}!`
+      }
+
+      voteResult.textContent = winner
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
